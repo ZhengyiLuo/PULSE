@@ -42,7 +42,6 @@ class HumanoidIm(humanoid_amp_task.HumanoidAMPTask):
             self._num_traj_samples = cfg["env"]["numTrajSamples"]
         else:
             self._num_traj_samples = 1
-        self._min_motion_len = cfg["env"].get("min_length", -1)
         self._traj_sample_timestep = 1 / cfg["env"].get("trajSampleTimestepInv", 30)
 
         self.load_humanoid_configs(cfg)

@@ -63,6 +63,7 @@ from learning import amp_network_builder
 from learning import amp_network_mcp_builder
 from learning import amp_network_pnn_builder
 from learning import amp_network_z_builder
+from learning import amp_network_z_reader_builder
 
 from env.tasks import humanoid_amp_task
 import hydra
@@ -257,6 +258,7 @@ def build_alg_runner(algo_observer):
     runner.model_builder.network_factory.register_builder('amp_mcp', lambda **kwargs: amp_network_mcp_builder.AMPMCPBuilder())
     runner.model_builder.network_factory.register_builder('amp_pnn', lambda **kwargs: amp_network_pnn_builder.AMPPNNBuilder())
     runner.model_builder.network_factory.register_builder('amp_z', lambda **kwargs: amp_network_z_builder.AMPZBuilder())
+    runner.model_builder.network_factory.register_builder('amp_z_reader', lambda **kwargs: amp_network_z_reader_builder.AMPZReaderBuilder())
     
     runner.algo_factory.register_builder('im_amp', lambda **kwargs: im_amp.IMAmpAgent(**kwargs))
     runner.player_factory.register_builder('im_amp', lambda **kwargs: im_amp_players.IMAMPPlayerContinuous(**kwargs))

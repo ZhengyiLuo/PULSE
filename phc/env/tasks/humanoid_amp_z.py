@@ -13,10 +13,11 @@ from phc.learning.pnn import PNN
 from collections import deque
 from phc.utils.torch_utils import project_to_norm
 
-from phc.utils.motion_lib import MotionLib
 from phc.utils.motion_lib_smpl import MotionLibSMPL 
-
 from phc.learning.network_loader import load_z_encoder, load_z_decoder
+
+from easydict import EasyDict
+from phc.utils.motion_lib_base import FixHeightMode
 
 HACK_MOTION_SYNC = False
 
@@ -66,10 +67,28 @@ class HumanoidAMPZ(humanoid_amp.HumanoidAMP):
 
         return
     
+    def _setup_character_props(self, key_bodies):
+        super()._setup_character_props(key_bodies)
+        self._num_actions = self.cfg['env'].get("embedding_size", 256)
+        
+        return
+    
     def _load_motion(self, motion_file):
         assert (self._dof_offsets[-1] == self.num_dof)
         if self.humanoid_type in ["smpl", "smplh", "smplx"]:
-            self._motion_lib = MotionLibSMPL(motion_file=motion_file, device=self.device, masterfoot_conifg=self._masterfoot_config)
+            motion_lib_cfg = EasyDict({
+                "motion_file": motion_file,
+                "device": torch.device("cpu"),
+                "fix_height": FixHeightMode.full_fix,
+                "min_length": self._min_motion_len,
+                "max_length": -1,
+                "im_eval": flags.im_eval,
+                "multi_thread": True ,
+                "smpl_type": self.humanoid_type,
+                "randomrize_heading": True,
+                "device": self.device,
+            })
+            self._motion_lib = MotionLibSMPL(motion_lib_cfg)
                 
             self._motion_lib.load_motions(skeleton_trees=self.skeleton_trees, gender_betas=self.humanoid_shapes.cpu(), limb_weights=self.humanoid_limb_and_weights.cpu(), random_sample=not HACK_MOTION_SYNC)
         

@@ -102,6 +102,8 @@ class HumanoidAMP(Humanoid):
         self._reset_default_env_ids = []
         self._reset_ref_env_ids = []
         self._state_reset_happened = False
+        
+        self._min_motion_len = cfg["env"].get("min_length", -1)
 
         super().__init__(cfg=cfg, sim_params=sim_params, physics_engine=physics_engine, device_type=device_type, device_id=device_id, headless=headless)
 

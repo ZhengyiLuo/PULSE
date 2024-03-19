@@ -206,7 +206,6 @@ class HumanoidImDistill(humanoid_im.HumanoidIm):
                     
             ################ GT-Action ################
             # actions = gt_action; print("using gt action") # Debugging 
-
         # apply actions
         self.pre_physics_step(actions)
 

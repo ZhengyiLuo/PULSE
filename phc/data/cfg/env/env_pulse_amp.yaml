@@ -1,3 +1,4 @@
+task: HumanoidSpeedZ
 motion_file: ""
 num_envs: 1536
 env_spacing:  5
@@ -10,19 +11,12 @@ embedding_size: 32
 
 z_readout: False
 fitting: False
-z_model: True # For motion symm loss
-freeze_hand: False
-distill: false
-save_kin_info: False
-distill_z_model: false
-z_read: False
 
 use_vae_prior: True
 use_vae_sphere_posterior: False
 use_vae_fixed_prior: False
 use_vae_sphere_prior: False
 use_vae_prior_loss: False
-
 
 distill: false
 save_kin_info: False
@@ -37,15 +31,7 @@ distill_model_config:
   numTrajSamples: 10
   z_activation: "silu"
   z_type: "vae"
-
 models: ['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth']
-
-real_weight: True
-box_body: True
-kp_scale: 1
-real_weight: True
-freeze_hand: False
-freeze_toe: False
 
 power_reward: False
 power_usage_reward: False
@@ -63,13 +49,12 @@ speedChangeStepsMin: 100
 speedChangeStepsMax: 200
 enableTaskObs: True
 
-pdControl: True
+control_mode: "isaac_pd"
 power_scale: 1.0
 controlFrequencyInv: 2 # 30 Hz
 stateInit: "Random"
 hybridInitProb: 0.5
 numAMPObsSteps: 10
-enableTaskObs: True
 
 local_root_obs: True
 root_height_obs: True

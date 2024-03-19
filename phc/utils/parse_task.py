@@ -38,6 +38,7 @@ from phc.env.tasks.humanoid_im_demo import HumanoidImDemo
 from phc.env.tasks.humanoid_im_mcp_demo import HumanoidImMCPDemo
 from phc.env.tasks.humanoid_im_distill import HumanoidImDistill
 from phc.env.tasks.humanoid_im_distill_getup import HumanoidImDistillGetup
+from phc.env.tasks.humanoid_speed import HumanoidSpeed, HumanoidSpeedZ
 
 from isaacgym import rlgpu
 
