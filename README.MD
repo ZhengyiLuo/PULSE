@@ -94,7 +94,7 @@ Press M (disable termination), and press I (start sampling), to see ramdomly sam
 
 Speed:
 ```
-python phc/run_hydra.py env.task=HumanoidSpeedZ env=env_pulse_amp exp_name=pulse_speed robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=sample_data/amass_isaac_standing_upright_slim.pkl
+python phc/run_hydra.py env.task=HumanoidSpeedZ env=env_pulse_amp exp_name=pulse_speed robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=[insert your data pkl]
 ```
 
 
