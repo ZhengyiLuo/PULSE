@@ -1,0 +1,112 @@
+# if given, will override the device setting in gym. 
+task: HumanoidImDistillGetup
+motion_file: ""
+num_envs: 3072
+env_spacing: 5
+
+# env_spacing: 0.5
+# divide_group: True
+
+episode_length: 300
+isFlagrun: False
+enable_debug_vis: False
+
+fut_tracks: False
+fut_tracks_dropout: False
+obs_v: 6
+auto_pmcp: False
+auto_pmcp_soft: True
+eval_full: False
+
+embedding_norm: 1
+embedding_size: 32
+z_type: vae
+use_vae_prior: True
+use_ar1_prior: True
+use_vae_clamped_prior: True
+vae_var_clamp_max: 2
+kld_coefficient: 0.01
+kld_coefficient_min: 0.001
+kld_anneal: True
+ar1_coefficient: 0.005
+
+
+######## Getup Features. ########
+getup_schedule: False
+recoverySteps: 90
+# recoveryEpisodeProb: 0.5
+# fallInitProb: 0.3
+recoveryEpisodeProb: 0.3
+fallInitProb: 0.1
+getup_udpate_epoch: 0 
+zero_out_far: False
+zero_out_far_train: False
+zero_out_far_steps: 90
+#######
+
+cycle_motion: True
+hard_negative: False
+fitting: True
+
+only_kin_loss: True
+distill: True
+save_kin_info: True
+distill_z_model: False
+z_read: False
+distill_model_config:
+  has_pnn: True
+  num_prim: 3
+  training_prim: 0
+  actors_to_load: 0
+  has_lateral: False
+  z_activation: "silu"
+
+  fut_tracks_dropout: False
+  fut_tracks: False
+  trajSampleTimestepInv: 5
+  numTrajSamples: 1
+  
+
+models: ['output/dgx/phc_3/Humanoid_00258000.pth', 'output/dgx/phc_comp_3/Humanoid_00023501.pth']
+
+control_mode: "isaac_pd"
+
+real_weight: True
+kp_scale: 1
+remove_toe_im: False # For imitation 
+power_reward: True
+
+has_shape_obs: false
+has_shape_obs_disc: false
+has_shape_variation: False
+shape_resampling_interval: 250
+
+pdControl: True
+power_scale: 1.0
+controlFrequencyInv: 2 # 30 Hz
+stateInit: "Random"  
+hybridInitProb: 0.5
+numAMPObsSteps: 10
+
+local_root_obs: True
+rootHeightObs: True
+key_bodies: ["R_Ankle", "L_Ankle", "R_Wrist",  "L_Wrist"]
+contact_bodies: ["R_Ankle", "L_Ankle", "R_Toe", "L_Toe"]
+reset_bodies: ['Pelvis', 'L_Hip', 'L_Knee', 'R_Hip', 'R_Knee', 'Torso', 'Spine', 'Chest', 'Neck', 'Head', 'L_Thorax', 'L_Shoulder', 'L_Elbow', 'L_Wrist', 'L_Hand', 'R_Thorax', 'R_Shoulder', 'R_Elbow', 'R_Wrist', 'R_Hand']
+terminationHeight: 0.15
+enableEarlyTermination: True
+terminationDistance: 0.25
+
+### Fut config
+numTrajSamples: 10
+trajSampleTimestepInv: 5
+enableTaskObs: True
+
+asset:
+  assetRoot: "/"
+  assetFileName: "mjcf/smpl_humanoid.xml"
+
+plane:
+  staticFriction: 1.0
+  dynamicFriction: 1.0
+  restitution: 0.0
