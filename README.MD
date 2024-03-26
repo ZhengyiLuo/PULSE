@@ -81,11 +81,12 @@ Notes on rendering: I am using pyvirtualdisplay to record the video such that yo
 
 ### Run PULSE
 
+**❗️❗️❗️Press M (disable termination), and press I (start sampling), to see ramdomly sampled motion.**
 ```
 python phc/run_hydra.py env.task=HumanoidImDistillGetup env=env_im_vae exp_name=pulse_vae_iclr robot.real_weight_porpotion_boxes=False learning=im_z_fit env.models=['output/HumanoidIm/phc_3/Humanoid_00258000.pth','output/HumanoidIm/phc_comp_3/Humanoid_00023501.pth'] env.motion_file=sample_data//amass_isaac_standing_upright_slim.pkl test=True env.num_envs=1  headless=False epoch=-1
 ```
 
-**Press M (disable termination), and press I (start sampling), to see ramdomly sampled motion.**
+
 
 
 ### Train Downstream Tasks 
