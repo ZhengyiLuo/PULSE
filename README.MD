@@ -21,7 +21,7 @@ This repo has a large amount of code overlap with [PHC](https://github.com/Zheng
 
 - [ ] Add support for smplx/h (fingers!!!).
 
-- [ ] Add suppport for more downstream tasks.
+- [ ] Add support for more downstream tasks. More downstream tasks can be found at [SMPLOlympics](https://smplolympics.github.io/). 
 
 ### Dependencies
 
