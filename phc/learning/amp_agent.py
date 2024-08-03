@@ -832,6 +832,10 @@ class AMPAgent(common_agent.CommonAgent):
                         humanoid_env.kld_coefficient = (0.01 - min_val) * max((anneal_end_epoch -self.epoch_num) / (anneal_end_epoch - anneal_start_epoch), 0) + min_val
                     info_dict["kin_kld_w"] = humanoid_env.kld_coefficient
                 ######### KLD annealing #######
+                
+                
+                    
+                    
             else:
                 raise NotImplementedError()    
                 

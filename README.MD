@@ -27,7 +27,7 @@ This repo has a large amount of code overlap with [PHC](https://github.com/Zheng
 
 To create the environment, follow the following instructions: 
 
-1. Create new conda environment and install pytroch:
+1. Create new conda environment and install pytroch:`
 
 
 ```

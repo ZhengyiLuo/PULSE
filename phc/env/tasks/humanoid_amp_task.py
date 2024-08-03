@@ -29,7 +29,6 @@
 import torch
 
 import phc.env.tasks.humanoid_amp as humanoid_amp
-import phc.env.tasks.humanoid_amp_z as humanoid_amp_z
 from phc.utils.flags import flags
 class HumanoidAMPTask(humanoid_amp.HumanoidAMP):
     def __init__(self, cfg, sim_params, physics_engine, device_type, device_id, headless):

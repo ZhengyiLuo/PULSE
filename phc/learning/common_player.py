@@ -175,7 +175,7 @@ class CommonPlayer(players.PpoPlayerContinuous):
 
     def _build_net(self, config):
         if self.normalize_input:
-            if "vec_env" in self.__dict__:
+            if "env" in self.__dict__:
                 obs_shape = torch_ext.shape_whc_to_cwh(self.env.task.get_running_mean_size())
             else:
                 obs_shape = torch_ext.shape_whc_to_cwh(self.obs_shape)

@@ -1,6 +1,6 @@
 import time
 import torch
-import phc.env.tasks.humanoid_amp as humanoid_amp
+import phc.env.tasks.humanoid as humanoid
 from phc.env.tasks.humanoid_amp import remove_base_rot
 from phc.utils import torch_utils
 from typing import OrderedDict
@@ -13,21 +13,16 @@ from phc.learning.pnn import PNN
 from collections import deque
 from phc.utils.torch_utils import project_to_norm
 
-from phc.utils.motion_lib_smpl import MotionLibSMPL 
 from phc.learning.network_loader import load_z_encoder, load_z_decoder
 
 from easydict import EasyDict
-from phc.utils.motion_lib_base import FixHeightMode
 
 HACK_MOTION_SYNC = False
 
-class HumanoidAMPZ(humanoid_amp.HumanoidAMP):
+class HumanoidZ(humanoid.Humanoid):
 
-    def __init__(self, cfg, sim_params, physics_engine, device_type, device_id, headless):
-        super().__init__(cfg=cfg, sim_params=sim_params, physics_engine=physics_engine, device_type=device_type, device_id=device_id, headless=headless)
-
+    def initialize_z_models(self):
         check_points = [torch_ext.load_checkpoint(ck_path) for ck_path in self.models_path]
-
         ### Loading Distill Model ###
         self.distill_model_config = self.cfg['env']['distill_model_config']
         self.embedding_size_distill = self.distill_model_config['embedding_size']
@@ -38,6 +33,7 @@ class HumanoidAMPZ(humanoid_amp.HumanoidAMP):
         self.fut_tracks_dropout_distill = self.distill_model_config['fut_tracks_dropout']
         self.z_activation = self.distill_model_config['z_activation']
         self.distill_z_type = self.distill_model_config.get("z_type", "sphere")
+        self.use_part = self.distill_model_config.get('use_part', False)
         
         self.embedding_partition_distill = self.distill_model_config.get("embedding_partion", 1)
         self.dict_size_distill = self.distill_model_config.get("dict_size", 1)
@@ -54,8 +50,9 @@ class HumanoidAMPZ(humanoid_amp.HumanoidAMP):
         
         self.decoder = load_z_decoder(check_points[0], activation = self.z_activation, z_type = self.distill_z_type, device = self.device) 
         self.encoder = load_z_encoder(check_points[0], activation = self.z_activation, z_type = self.distill_z_type, device = self.device)
+            
         self.power_acc = torch.zeros((self.num_envs, 2)).to(self.device)
-        self.power_usage_coefficient = cfg["env"].get("power_usage_coefficient", 0.005)
+        self.power_usage_coefficient = self.cfg["env"].get("power_usage_coefficient", 0.005)
 
         self.running_mean, self.running_var = check_points[-1]['running_mean_std']['running_mean'], check_points[-1]['running_mean_std']['running_var']
 
@@ -64,55 +61,12 @@ class HumanoidAMPZ(humanoid_amp.HumanoidAMP):
             self.kin_dict.update({
                 "gt_z": torch.zeros([self.num_envs,self.cfg['env'].get("embedding_size", 256) ]),
                 }) # current root pos + root for future aggergration
-
-        return
     
-    def _setup_character_props(self, key_bodies):
-        super()._setup_character_props(key_bodies)
+    def _setup_character_props_z(self):
         self._num_actions = self.cfg['env'].get("embedding_size", 256)
-        
         return
-    
-    def _load_motion(self, motion_file):
-        assert (self._dof_offsets[-1] == self.num_dof)
-        if self.humanoid_type in ["smpl", "smplh", "smplx"]:
-            motion_lib_cfg = EasyDict({
-                "motion_file": motion_file,
-                "device": torch.device("cpu"),
-                "fix_height": FixHeightMode.full_fix,
-                "min_length": self._min_motion_len,
-                "max_length": -1,
-                "im_eval": flags.im_eval,
-                "multi_thread": True ,
-                "smpl_type": self.humanoid_type,
-                "randomrize_heading": True,
-                "device": self.device,
-            })
-            self._motion_lib = MotionLibSMPL(motion_lib_cfg)
-                
-            self._motion_lib.load_motions(skeleton_trees=self.skeleton_trees, gender_betas=self.humanoid_shapes.cpu(), limb_weights=self.humanoid_limb_and_weights.cpu(), random_sample=not HACK_MOTION_SYNC)
-        
-        else:
-            self._motion_lib = MotionLib(motion_file=motion_file, dof_body_ids=self._dof_body_ids, dof_offsets=self._dof_offsets, key_body_ids=self._key_body_ids.cpu().numpy(), device=self.device)
 
-        return
-    
- 
-    def load_pnn(self, pnn_ck):
-        mlp_args = {'input_size': pnn_ck['model']['a2c_network.pnn.actors.0.0.weight'].shape[1], 'units': pnn_ck['model']['a2c_network.pnn.actors.0.2.weight'].shape[::-1], 'activation': "relu", 'dense_func': torch.nn.Linear}
-        pnn = PNN(mlp_args, output_size=69, numCols=self.num_prim, has_lateral=self.has_lateral)
-        state_dict = pnn.state_dict()
-        for k in pnn_ck['model'].keys():
-            if "pnn" in k:
-                pnn_dict_key = k.split("pnn.")[1]
-                state_dict[pnn_dict_key].copy_(pnn_ck['model'][k])
-        pnn.freeze_pnn(self.num_prim)
-        pnn.to(self.device)
-        return pnn
-
-
-
-    def get_task_obs_size_detail(self):
+    def get_task_obs_size_detail_z(self):
         task_obs_detail = OrderedDict()
 
         ### For Z
@@ -122,50 +76,16 @@ class HumanoidAMPZ(humanoid_amp.HumanoidAMP):
         task_obs_detail['z_readout'] = self.cfg['env'].get("z_readout", False)
         task_obs_detail['z_type'] = self.cfg['env'].get("z_type", "sphere")
         task_obs_detail['num_unique_motions'] = self._motion_lib._num_unique_motions
-
         return task_obs_detail
 
-    def _compute_reward(self, actions):
-        super()._compute_reward(actions)
-        
-        # power_all = torch.abs(torch.multiply(self.dof_force_tensor, self._dof_vel))
-        # power_all = power_all.reshape(-1, 23, 3)
-        # left_power = power_all[:, self.left_indexes].reshape(self.num_envs, -1).sum(dim = -1)
-        # right_power = power_all[:, self.right_indexes].reshape(self.num_envs, -1).sum(dim = -1)
-        # self.power_acc[:, 0] += left_power
-        # self.power_acc[:, 1] += right_power
-        # self.power_acc[self.progress_buf <= 3] = 0
-        # power_usage_reward = self.power_acc/(self.progress_buf + 1)[:, None]
-        # power_usage_reward = - self.power_usage_coefficient * (power_usage_reward[:, 0] - power_usage_reward[:, 1]).abs()
-        # power_usage_reward[self.progress_buf <= 3] = 0 # First 3 frame power reward should not be counted. since they could be dropped. on the ground to balance.
-        # self.rew_buf[:] = power_usage_reward
-        
-        # import ipdb; ipdb.set_trace()
-        
-        return
-
-    
-    def step(self, action_z):
-
-        # if self.dr_randomizations.get('actions', None):
-        #     actions = self.dr_randomizations['actions']['noise_lambda'](actions)
-        # if flags.server_mode:
-            # t_s = time.time()
-        # t_s = time.time()
+    def compute_z_actions(self, action_z):
         with torch.no_grad():
+            
             # Apply trained Model.
-            
             ################ GT-Z ################
-            
             self_obs_size = self.get_self_obs_size()
-            if self.obs_v == 2:
-                self_obs_size = self_obs_size//self.past_track_steps
-                obs_buf = self.obs_buf.view(self.num_envs, self.past_track_steps, -1)
-                curr_obs = obs_buf[:, -1]
-                self_obs = ((curr_obs[:, :self_obs_size] - self.running_mean.float()[:self_obs_size]) / torch.sqrt(self.running_var.float()[:self_obs_size] + 1e-05))
-            else:
-                self_obs = (self.obs_buf[:, :self_obs_size] - self.running_mean.float()[:self_obs_size]) / torch.sqrt(self.running_var.float()[:self_obs_size] + 1e-05)
-                
+            self_obs = (self.obs_buf[:, :self_obs_size] - self.running_mean.float()[:self_obs_size]) / torch.sqrt(self.running_var.float()[:self_obs_size] + 1e-05)
+            
             if self.distill_z_type == "hyper":
                 action_z = self.decoder.hyper_layer(action_z)
             if self.distill_z_type == "vq_vae":
@@ -187,11 +107,42 @@ class HumanoidAMPZ(humanoid_amp.HumanoidAMP):
                     action_z = project_to_norm(action_z, 1, "sphere")
                 else:
                     action_z = project_to_norm(action_z, self.cfg['env'].get("embedding_norm", 5), "none")
-                    
+
             else:
                 action_z = project_to_norm(action_z, self.cfg['env'].get("embedding_norm", 5), self.distill_z_type)
+                
+                
+            ######################## Apply Z Encoder ########################
+            # import phc.env.tasks.humanoid_im as humanoid_im
+            # body_pos = self._rigid_body_pos
+            # body_rot = self._rigid_body_rot
+            # body_vel = self._rigid_body_vel
+            # body_ang_vel = self._rigid_body_ang_vel
+            # root_states = self._humanoid_root_states
+            # root_pos = root_states[..., 0:3]
+            # root_rot = root_states[..., 3:7]
+            # motion_times = (self.progress_buf + 1) * self.dt + self._motion_start_times
+            # motion_res = self._get_state_from_motionlib_cache(self._sampled_motion_ids, motion_times)  # pass in the env_ids such that the motion is in synced.
+            # ref_root_pos, ref_root_rot, ref_dof_pos, ref_root_vel, ref_root_ang_vel, ref_dof_vel, ref_smpl_params, ref_limb_weights, ref_pose_aa, ref_rb_pos, ref_rb_rot, ref_body_vel, ref_body_ang_vel = \
+            # motion_res["root_pos"], motion_res["root_rot"], motion_res["dof_pos"], motion_res["root_vel"], motion_res["root_ang_vel"], motion_res["dof_vel"], \
+            # motion_res["motion_bodies"], motion_res["motion_limb_weights"], motion_res["motion_aa"], motion_res["rg_pos"], motion_res["rb_rot"], motion_res["body_vel"], motion_res["body_ang_vel"]
+            # body_pos_subset = body_pos[..., self._track_bodies_id, :]
+            # body_rot_subset = body_rot[..., self._track_bodies_id, :]
+            # body_vel_subset = body_vel[..., self._track_bodies_id, :]
+            # body_ang_vel_subset = body_ang_vel[..., self._track_bodies_id, :]
 
-           
+            # ref_rb_pos_subset = ref_rb_pos[..., self._track_bodies_id, :]
+            # ref_rb_rot_subset = ref_rb_rot[..., self._track_bodies_id, :]
+            # ref_body_vel_subset = ref_body_vel[..., self._track_bodies_id, :]
+            # ref_body_ang_vel_subset = ref_body_ang_vel[..., self._track_bodies_id, :]
+            # im_obs = humanoid_im.compute_imitation_observations_v6(root_pos, root_rot, body_pos_subset, body_rot_subset, body_vel_subset, body_ang_vel_subset, ref_rb_pos_subset, ref_rb_rot_subset, ref_body_vel_subset, ref_body_ang_vel_subset, 1, self._has_upright_start)
+            # im_shape = im_obs.shape[-1]
+            
+            # im_obs = (im_obs - self.running_mean.float()[-im_shape:]) / torch.sqrt(self.running_var.float()[-im_shape:] + 1e-05)
+            # encoder_latent = self.encoder.encoder(torch.cat([self_obs, im_obs], dim = -1))
+            # action_z = self.encoder.z_mu(encoder_latent)
+            ######################## Apply Z Encoder ########################
+
             if self.z_all:
                 x_all = self.decoder.decoder(action_z)
             else:
@@ -200,10 +151,13 @@ class HumanoidAMPZ(humanoid_amp.HumanoidAMP):
                 
                 # z_prior_out = self.decoder.z_prior(self_obs); prior_mu, prior_log_var = self.decoder.z_prior_mu(z_prior_out), self.decoder.z_prior_logvar(z_prior_out); print(prior_mu.max(), prior_mu.min())
                 # print('....')
-                
             actions = x_all
+        return actions
+    
+    def step_z(self, action_z):
+        self.action_z = action_z
 
-        # actions = x_all[:, 3]  # Debugging
+        actions = self.compute_z_actions(action_z)
 
         # apply actions
         self.pre_physics_step(actions)
@@ -217,35 +171,8 @@ class HumanoidAMPZ(humanoid_amp.HumanoidAMP):
 
         # compute observations, rewards, resets, ...
         self.post_physics_step()
-        if flags.server_mode:
-            dt = time.time() - t_s
-            print(f'\r {1/dt:.2f} fps', end='')
-            
-        # dt = time.time() - t_s
-        # self.fps.append(1/dt)
-        # print(f'\r {np.mean(self.fps):.2f} fps', end='')
         
 
         if self.dr_randomizations.get('observations', None):
             self.obs_buf = self.dr_randomizations['observations']['noise_lambda'](self.obs_buf)
 
-
-@torch.jit.script
-def compute_z_target(root_pos, root_rot,  ref_body_pos, ref_body_vel, time_steps, upright):
-    # type: (Tensor, Tensor, Tensor, Tensor, int, bool) -> Tensor
-    # No rotation information. Leave IK for RL.
-    # Future tracks in this obs will not contain future diffs.
-    obs = []
-    B, J, _ = ref_body_pos.shape
-
-    if not upright:
-        root_rot = remove_base_rot(root_rot)
-
-    heading_inv_rot = torch_utils.calc_heading_quat_inv(root_rot)
-    heading_rot = torch_utils.calc_heading_quat(root_rot)
-    heading_inv_rot_expand = heading_inv_rot.unsqueeze(-2).repeat((1, J, 1)).repeat_interleave(time_steps, 0)
-    local_ref_body_pos = ref_body_pos.view(B, time_steps, J, 3) - root_pos.view(B, 1, 1, 3)  # preserves the body position
-    local_ref_body_pos = torch_utils.my_quat_rotate(heading_inv_rot_expand.view(-1, 4), local_ref_body_pos.view(-1, 3))
-
-    
-    return local_ref_body_pos.view(B, J, -1)
