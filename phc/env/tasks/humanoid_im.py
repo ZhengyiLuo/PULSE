@@ -1196,6 +1196,24 @@ class HumanoidIm(humanoid_amp_task.HumanoidAMPTask):
         return
 
 
+class HumanoidImZ(HumanoidIm):
+    def __init__(self, cfg, sim_params, physics_engine, device_type, device_id, headless):
+        super().__init__(cfg=cfg, sim_params=sim_params, physics_engine=physics_engine, device_type=device_type, device_id=device_id, headless=headless)
+        self.initialize_z_models()
+        return
+    
+    def step(self, actions):
+        self.step_z(actions)
+        return
+     
+    
+    def _setup_character_props(self, key_bodies):
+        super()._setup_character_props(key_bodies)
+        super()._setup_character_props_z()
+        
+        return
+
+
 #####################################################################
 ###=========================jit functions=========================###
 #####################################################################

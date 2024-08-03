@@ -15,7 +15,7 @@ This repo has a large amount of code overlap with [PHC](https://github.com/Zheng
 
 ## News 🚩
 
-[August 3, 2024] PULSE-X Released (the on used in [SMPLOlympics](https://smplolympics.github.io/), not [Omnigrasp](https://www.zhengyiluo.com/Omnigrasp/))
+[August 3, 2024] PULSE-X Released (the one used in [SMPLOlympics](https://smplolympics.github.io/), not [Omnigrasp](https://www.zhengyiluo.com/Omnigrasp/))
 
 [March 19, 2024] Training and Evaluation code released.
 
@@ -41,7 +41,7 @@ pip install -r requirement.txt
 2. Download and setup [Isaac Gym](https://developer.nvidia.com/isaac-gym). 
 
 
-3. [Optional if only inference] Download SMPL paramters from [SMPL](https://smpl.is.tue.mpg.de/). Put them in the `data/smpl` folder, unzip them into 'data/smpl' folder. Please download the v1.1.0 version, which contains the neutral humanoid. Rename the files `basicmodel_neutral_lbs_10_207_0_v1.1.0`, `basicmodel_m_lbs_10_207_0_v1.1.0.pkl`, `basicmodel_f_lbs_10_207_0_v1.1.0.pkl` to `SMPL_NEUTRAL.pkl`, `SMPL_MALE.pkl` and `SMPL_FEMALE.pkl`. Rename The file structure should look like this:
+3. [Optional if only inference] Download SMPL paramters from [SMPL](https://smpl.is.tue.mpg.de/) and [SMPLX](https://smpl-x.is.tue.mpg.de/download.php). Put them in the `data/smpl` folder, unzip them into 'data/smpl' folder. For SMPL, please download the v1.1.0 version, which contains the neutral humanoid. Rename the files `basicmodel_neutral_lbs_10_207_0_v1.1.0`, `basicmodel_m_lbs_10_207_0_v1.1.0.pkl`, `basicmodel_f_lbs_10_207_0_v1.1.0.pkl` to `SMPL_NEUTRAL.pkl`, `SMPL_MALE.pkl` and `SMPL_FEMALE.pkl`. For SMPLX, please download the v1.1 version. Rename The file structure should look like this:
 
 ```
 
@@ -50,6 +50,9 @@ pip install -r requirement.txt
         |-- SMPL_FEMALE.pkl
         |-- SMPL_NEUTRAL.pkl
         |-- SMPL_MALE.pkl
+        |-- SMPLX_FEMALE.pkl
+        |-- SMPLX_NEUTRAL.pkl
+        |-- SMPLX_MALE.pkl
 ```
 
 4. Use the following script to download trained models and sample data.
@@ -94,6 +97,16 @@ python phc/run_hydra.py env.task=HumanoidImDistillGetup env=env_im_vae exp_name=
 ### Train Downstream Tasks 
 
 
+#### SMPLX Tasks:
+🚨🚨🚨New: PULSE-X 
+
+```
+python phc/run_hydra.py env.task=HumanoidSpeedZ env=env_pulse_amp exp_name=pulse_speed robot=smplx_humanoid learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_x/Humanoid.pth'] env.motion_file=sample_data/standing_x.pkl
+```
+
+
+#### SMPL Tasks:
+
 Speed:
 ```
 python phc/run_hydra.py env.task=HumanoidSpeedZ env=env_pulse_amp exp_name=pulse_speed robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=sample_data/amass_isaac_simple_run_upright_slim.pkl
@@ -117,11 +130,11 @@ python phc/run_hydra.py env.task=HumanoidPedestrianTerrainZ env=env_pulse_terrai
 
 VR Controller Tracking 
 ```
-python phc/run_hydra.py env.task=HumanoidIm env=env_pulse_im exp_name=pulse_vr robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=[insert amass data]
+python phc/run_hydra.py env.task=HumanoidImZ env=env_pulse_im exp_name=pulse_vr robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=[insert amass data]
 ```
 
 
-
+To train baseline (PPO) versions, change the "env.task=xxxZ" to "env.task=xxx" and change the "learning=pulse_z_task" to "learning=ppo".
 
 
 
