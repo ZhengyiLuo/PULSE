@@ -31,7 +31,7 @@ distill_model_config:
   numTrajSamples: 10
   z_activation: "silu"
   z_type: "vae"
-models: ['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth']
+models: ['output/HumanoidIm/pulse_vae_x/Humanoid.pth']
 
 power_reward: False
 power_usage_reward: False
