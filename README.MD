@@ -15,13 +15,15 @@ This repo has a large amount of code overlap with [PHC](https://github.com/Zheng
 
 ## News 🚩
 
+[August 3, 2024] PULSE-X Released (the on used in [SMPLOlympics](https://smplolympics.github.io/), not [Omnigrasp](https://www.zhengyiluo.com/Omnigrasp/))
+
 [March 19, 2024] Training and Evaluation code released.
 
 ## TODOs
 
-- [ ] Add support for smplx/h (fingers!!!).
+- [x] Add support for smplx/h (fingers!!!).
 
-- [ ] Add support for more downstream tasks. More downstream tasks can be found at [SMPLOlympics](https://smplolympics.github.io/). 
+- [x] Add support for more downstream tasks. More downstream tasks can be found at [SMPLOlympics](https://smplolympics.github.io/). 
 
 ### Dependencies
 
@@ -91,11 +93,21 @@ python phc/run_hydra.py env.task=HumanoidImDistillGetup env=env_im_vae exp_name=
 
 ### Train Downstream Tasks 
 
-(more coming soon!)
 
 Speed:
 ```
 python phc/run_hydra.py env.task=HumanoidSpeedZ env=env_pulse_amp exp_name=pulse_speed robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=[insert your data pkl]
+```
+
+Reach:
+```
+python phc/run_hydra.py env.task=HumanoidReachZ env=env_pulse_amp exp_name=pulse_reach robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=[insert your data pkl] +env.tarSpeed=1.0 +env.tarChangeStepsMin=50 +env.tarChangeStepsMax=100 +env.tarDistMax=1 +env.tarHeightMin=0.2 +env.tarHeightMax=2.0 +env.reachBodyName="R_Hand"
+```
+
+Strike:
+```
+python phc/run_hydra.py env.task=HumanoidStrikeZ env=env_pulse_amp exp_name=pulse_strike robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=[insert your data pkl] +env.strikeBodyNames=["R_Hand","R_Wrist","R_Elbow"]
+
 ```
 
 
