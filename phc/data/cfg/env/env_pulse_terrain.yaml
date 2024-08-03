@@ -1,0 +1,94 @@
+task: HumanoidSpeedZ
+motion_file: ""
+num_envs: 1536
+env_spacing:  5
+episode_length: 300
+isFlagrun: False
+enable_debug_vis: False
+
+embedding_norm: 1
+embedding_size: 32
+
+z_readout: False
+fitting: False
+
+use_vae_prior: True
+use_vae_sphere_posterior: False
+use_vae_fixed_prior: False
+use_vae_sphere_prior: False
+use_vae_prior_loss: False
+
+distill: false
+save_kin_info: False
+distill_z_model: false
+z_read: False
+distill_model_config:
+  embedding_norm: 1
+  embedding_size: 32
+  fut_tracks_dropout: False
+  fut_tracks: False
+  trajSampleTimestepInv: 5
+  numTrajSamples: 10
+  z_activation: "silu"
+  z_type: "vae"
+models: ['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth']
+
+power_reward: False
+power_usage_reward: False
+power_usage_coefficient: 0.01
+
+has_shape_obs: false
+has_shape_obs_disc: false
+has_shape_variation: False
+shape_resampling_interval: 250
+
+# Task specific parameters
+numTrajSamples: 10
+trajSampleTimestep: 0.5
+speedMin: 0.0
+speedMax: 3.0
+accelMax: 2.0
+sharpTurnProb: 0.02
+enableTaskObs: True
+
+control_mode: "isaac_pd"
+power_scale: 1.0
+controlFrequencyInv: 2 # 30 Hz
+stateInit: "Random"
+hybridInitProb: 0.5
+numAMPObsSteps: 10
+
+local_root_obs: True
+root_height_obs: True
+ampRootHeightObs: False
+key_bodies: ["R_Ankle", "L_Ankle", "R_Wrist",  "L_Wrist"]
+contact_bodies: ["R_Ankle", "L_Ankle", "R_Toe", "L_Toe"]
+terminationHeight: 0.15
+enableEarlyTermination: True
+
+terrain:
+  terrainType: trimesh # none, plane, or trimesh
+  staticFriction: 1.0  # [-]
+  dynamicFriction: 1.0  # [-]
+  restitution: 0.        # [-]
+  # rough terrain only:
+  curriculum: true
+  maxInitMapLevel: 0
+  mapLength: 20.
+  mapWidth: 20.
+  numLevels: 5
+  numTerrains: 20
+  # terrain types: [smooth slope, rough slope, stairs up, stairs down, discrete, stepping, poles, flat]
+  terrainProportions: [0.2, 0.1, 0.15, 0.15, 0.05, 0., 0.25, 0.1]
+  # tri mesh only:
+  slopeTreshold: 0.9
+
+asset:
+  assetRoot: "/"
+  assetFileName: "mjcf/smpl_humanoid.xml"    
+
+plane:
+  staticFriction: 1.0
+  dynamicFriction: 1.0
+  restitution: 0.0
+

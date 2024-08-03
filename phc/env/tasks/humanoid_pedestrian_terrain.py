@@ -41,6 +41,7 @@ class HumanoidPedestrianTerrain(humanoid_traj.HumanoidTraj):
             
         # self.real_mesh = cfg['args'].real_mesh
         self.real_mesh = False
+        self.load_humanoid_configs(cfg)
         self.load_smpl_configs(cfg)
         self.cfg = cfg
         self.num_envs = cfg["env"]["num_envs"]
@@ -69,7 +70,7 @@ class HumanoidPedestrianTerrain(humanoid_traj.HumanoidTraj):
         self.center_height_points = self.init_center_height_points()
         self.height_meas_scale = 5
 
-        self.show_sensors = self.cfg['args'].show_sensors
+        self.show_sensors = self.cfg['env'].get("show_sensors", False)
         if (not self.headless) and self.show_sensors:
             self._sensor_handles = [[] for _ in range(self.num_envs)]
 
@@ -815,7 +816,7 @@ class HumanoidPedestrianTerrain(humanoid_traj.HumanoidTraj):
         return
 
     def create_training_ground(self):
-        if flags.small_terrain:
+        if self.cfg["env"].get("small_terrain", False):
             self.cfg["env"]["terrain"]['mapLength'] = 8
             self.cfg["env"]["terrain"]['mapWidth'] = 8
 

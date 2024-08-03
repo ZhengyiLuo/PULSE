@@ -96,25 +96,38 @@ python phc/run_hydra.py env.task=HumanoidImDistillGetup env=env_im_vae exp_name=
 
 Speed:
 ```
-python phc/run_hydra.py env.task=HumanoidSpeedZ env=env_pulse_amp exp_name=pulse_speed robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=[insert your data pkl]
+python phc/run_hydra.py env.task=HumanoidSpeedZ env=env_pulse_amp exp_name=pulse_speed robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=sample_data/amass_isaac_simple_run_upright_slim.pkl
 ```
 
 Reach:
 ```
-python phc/run_hydra.py env.task=HumanoidReachZ env=env_pulse_amp exp_name=pulse_reach robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=[insert your data pkl] +env.tarSpeed=1.0 +env.tarChangeStepsMin=50 +env.tarChangeStepsMax=100 +env.tarDistMax=1 +env.tarHeightMin=0.2 +env.tarHeightMax=2.0 +env.reachBodyName="R_Hand"
+python phc/run_hydra.py env.task=HumanoidReachZ env=env_pulse_amp exp_name=pulse_reach robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=sample_data/amass_isaac_simple_run_upright_slim.pkl +env.tarSpeed=1.0 +env.tarChangeStepsMin=50 +env.tarChangeStepsMax=100 +env.tarDistMax=1 +env.tarHeightMin=0.2 +env.tarHeightMax=2.0 +env.reachBodyName="R_Hand"
 ```
 
 Strike:
 ```
-python phc/run_hydra.py env.task=HumanoidStrikeZ env=env_pulse_amp exp_name=pulse_strike robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=[insert your data pkl] +env.strikeBodyNames=["R_Hand","R_Wrist","R_Elbow"]
+python phc/run_hydra.py env.task=HumanoidStrikeZ env=env_pulse_amp exp_name=pulse_strike robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=sample_data/amass_isaac_simple_run_upright_slim.pkl +env.strikeBodyNames=["R_Hand","R_Wrist","R_Elbow"]
 
+```
+
+Terrain 
+```
+python phc/run_hydra.py env.task=HumanoidPedestrianTerrainZ env=env_pulse_terrain exp_name=pulse_terrain robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=sample_data/amass_isaac_simple_run_upright_slim.pkl 
+```
+
+VR Controller Tracking 
+```
+python phc/run_hydra.py env.task=HumanoidIm env=env_pulse_im exp_name=pulse_vr robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=[insert amass data]
 ```
 
 
 
 
 
-## Training
+
+## Testing 
+
+For testing, append `epoch=-1 test=True env.num_envs=1  headless=False no_virtual_display=True` to the command
 
 
 

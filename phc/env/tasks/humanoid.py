@@ -83,7 +83,7 @@ class Humanoid(BaseTask):
         self.sim_params = sim_params
         self.physics_engine = physics_engine
         self.has_task = False
-
+        
         self.load_humanoid_configs(cfg)
 
         self.control_mode = self.cfg["env"]["control_mode"]
@@ -252,6 +252,7 @@ class Humanoid(BaseTask):
             
             
     def load_common_humanoid_configs(self, cfg):
+        
         self._divide_group = cfg["env"].get("divide_group", False)
         self._group_obs = cfg["env"].get("group_obs", False)
         self._disable_group_obs = cfg["env"].get("disable_group_obs", False)
