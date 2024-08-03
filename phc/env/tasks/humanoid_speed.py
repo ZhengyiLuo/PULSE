@@ -253,7 +253,8 @@ class HumanoidSpeed(humanoid_amp_task.HumanoidAMPTask):
         
         # ZL Hack: Forcing to always be facing the x-direction. 
         heading_rot_inv = torch_utils.calc_heading_quat_inv(root_rot)
-        heading_rot_inv_repeat = heading_rot_inv[:, None].repeat(1, 24, 1)
+        
+        heading_rot_inv_repeat = heading_rot_inv[:, None].repeat(1, len(self._body_names), 1)
         root_rot = quat_mul(heading_rot_inv, root_rot).clone()
         rb_pos = quat_apply(heading_rot_inv_repeat, rb_pos - root_pos[:, None, :]).clone() + root_pos[:, None, :]
         rb_rot = quat_mul(heading_rot_inv_repeat, rb_rot).clone()

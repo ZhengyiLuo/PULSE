@@ -84,7 +84,7 @@ this wil download amass_isaac_standing_upright_slim.pkl, which is a standing sti
 Notes on rendering: I am using pyvirtualdisplay to record the video such that you can see all humanoids at the same time (default function will only capture the first environment). You can disable it using the flag `no_virtual_display=True`. 
 
 
-### Run PULSE
+### Run PULSE Random Sampling
 
 **❗️❗️❗️Press M (disable termination), and press I (start sampling), to see ramdomly sampled motion.**
 ```
@@ -101,7 +101,7 @@ python phc/run_hydra.py env.task=HumanoidImDistillGetup env=env_im_vae exp_name=
 🚨🚨🚨New: PULSE-X 
 
 ```
-python phc/run_hydra.py env.task=HumanoidSpeedZ env=env_pulse_amp exp_name=pulse_speed robot=smplx_humanoid learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_x/Humanoid.pth'] env.motion_file=sample_data/standing_x.pkl
+python phc/run_hydra.py env.task=HumanoidSpeedZ env=env_pulsex_amp exp_name=pulse_speed robot=smplx_humanoid learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_x/Humanoid.pth'] env.motion_file=sample_data/standing_x.pkl
 ```
 
 
