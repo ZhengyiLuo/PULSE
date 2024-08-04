@@ -252,7 +252,12 @@ class HumanoidSpeed(humanoid_amp_task.HumanoidAMPTask):
         motion_ids, motion_times, root_pos, root_rot, dof_pos, root_vel, root_ang_vel, dof_vel, rb_pos, rb_rot, body_vel, body_ang_vel  = super()._sample_ref_state(env_ids)
         
         # ZL Hack: Forcing to always be facing the x-direction. 
-        heading_rot_inv = torch_utils.calc_heading_quat_inv(root_rot)
+        if not self._has_upright_start:
+            heading_rot_inv = torch_utils.calc_heading_quat_inv(humanoid_amp.remove_base_rot(root_rot))
+        else:
+            heading_rot_inv = torch_utils.calc_heading_quat_inv(root_rot)
+            
+        
         
         heading_rot_inv_repeat = heading_rot_inv[:, None].repeat(1, len(self._body_names), 1)
         root_rot = quat_mul(heading_rot_inv, root_rot).clone()
