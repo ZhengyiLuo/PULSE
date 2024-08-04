@@ -77,7 +77,7 @@ class HumanoidTraj(humanoid_amp_task.HumanoidAMPTask):
         return
 
     def _load_marker_asset(self):
-        asset_root = "egoquest/data/assets/mjcf/"
+        asset_root = "phc/data/assets/urdf/"
         asset_file = "traj_marker.urdf"
 
         asset_options = gymapi.AssetOptions()

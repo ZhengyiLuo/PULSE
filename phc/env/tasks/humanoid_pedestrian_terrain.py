@@ -120,7 +120,7 @@ class HumanoidPedestrianTerrain(humanoid_traj.HumanoidTraj):
         return
 
     def _load_sensor_asset(self):
-        asset_root = "amp/data/assets/mjcf/"
+        asset_root = "phc/data/assets/mjcf/"
         asset_file = "sensor_marker.urdf"
 
         asset_options = gymapi.AssetOptions()

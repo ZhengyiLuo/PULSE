@@ -1,7 +1,7 @@
 
 # Universal Humanoid Motion Representations for Physics-Based Control
 
-Official implementation of ICLR 2023 spotlight paper: "Universal Humanoid Motion Representations for Physics-Based Control". In this work, we develop a humanoi motion latent space that is low dimensional (32), high coverage (99.8% of AMASS motion), can speed up downstream task for hierarchical RL, and can be randomly sampled as a generative model. 
+Official implementation of ICLR 2024 spotlight paper: "Universal Humanoid Motion Representations for Physics-Based Control". In this work, we develop a humanoi motion latent space that is low dimensional (32), high coverage (99.8% of AMASS motion), can speed up downstream task for hierarchical RL, and can be randomly sampled as a generative model. 
 
 Our proposed Physics-based Universal motion Latent SpacE (PULSE) is akin to a foundation model for control where downstream tasks ranging from simple locomotion, complex terrain traversal, to free-form motion tracking can all reuse this representation
 
@@ -101,7 +101,7 @@ python phc/run_hydra.py env.task=HumanoidImDistillGetup env=env_im_vae exp_name=
 🚨🚨🚨New: PULSE-X 
 
 ```
-python phc/run_hydra.py env.task=HumanoidSpeedZ env=env_pulsex_amp exp_name=pulse_speed robot=smplx_humanoid learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_x/Humanoid.pth'] env.motion_file=sample_data/standing_x.pkl
+python phc/run_hydra.py env.task=HumanoidSpeedZ env=env_pulsex_amp exp_name=pulse_speed robot=smplx_humanoid learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_x/Humanoid.pth'] env.motion_file=sample_data/amass_isaac_x_simple_run.pkl
 ```
 
 
