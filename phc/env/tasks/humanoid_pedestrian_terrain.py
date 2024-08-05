@@ -54,11 +54,9 @@ class HumanoidPedestrianTerrain(humanoid_traj.HumanoidTraj):
 
 
         self.square_height_points = self.init_square_height_points()
-        self.terrain_obs_type = self.cfg['env'].get("terrain_obs_type",
-                                                    "square")
+        self.terrain_obs_type = self.cfg['env'].get("terrain_obs_type","square")
         self.terrain_obs = self.cfg['env'].get("terrain_obs", False)
-        self.terrain_obs_root = self.cfg['env'].get("terrain_obs_root",
-                                                    "pelvis")
+        self.terrain_obs_root = self.cfg['env'].get("terrain_obs_root", "pelvis")
         if self.terrain_obs_type == "fov":
             self.height_points = self.init_fov_height_points()
         elif self.terrain_obs_type == "square_fov":
@@ -66,7 +64,7 @@ class HumanoidPedestrianTerrain(humanoid_traj.HumanoidTraj):
         elif self.terrain_obs_type == "square":
             self.height_points = self.square_height_points
         self.root_points = self.init_root_points()
-
+        
         self.center_height_points = self.init_center_height_points()
         self.height_meas_scale = 5
 
@@ -966,7 +964,6 @@ class HumanoidPedestrianTerrainZ(HumanoidPedestrianTerrain):
         self.step_z(actions)
         return
      
-    
     def _setup_character_props(self, key_bodies):
         super()._setup_character_props(key_bodies)
         super()._setup_character_props_z()

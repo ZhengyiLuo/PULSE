@@ -1,7 +1,7 @@
-task: HumanoidSpeedZ
+task: HumanoidPedestrianTerrain
 motion_file: ""
 num_envs: 1536
-env_spacing:  5
+env_spacing:  0
 episode_length: 300
 isFlagrun: False
 enable_debug_vis: False
