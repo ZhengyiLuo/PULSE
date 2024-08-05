@@ -15,7 +15,7 @@ This repo has a large amount of code overlap with [PHC](https://github.com/Zheng
 
 ## News 🚩
 
-[August 3, 2024] PULSE-X Released (the one used in [SMPLOlympics](https://smplolympics.github.io/), not [Omnigrasp](https://www.zhengyiluo.com/Omnigrasp/))
+[August 3, 2024] PULSE-X (preview) Released (the one used in [SMPLOlympics](https://smplolympics.github.io/))
 
 [March 19, 2024] Training and Evaluation code released.
 
@@ -98,7 +98,7 @@ python phc/run_hydra.py env.task=HumanoidImDistillGetup env=env_im_vae exp_name=
 
 
 #### SMPLX Tasks:
-🚨🚨🚨New: PULSE-X 
+🚨🚨🚨New: PULSE-X (preview)
 
 ```
 python phc/run_hydra.py env.task=HumanoidSpeedZ env=env_pulsex_amp exp_name=pulse_speed robot=smplx_humanoid learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_x/Humanoid.pth'] env.motion_file=sample_data/amass_isaac_x_simple_run.pkl
