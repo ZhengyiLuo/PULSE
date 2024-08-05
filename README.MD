@@ -101,7 +101,7 @@ python phc/run_hydra.py env.task=HumanoidImDistillGetup env=env_im_vae exp_name=
 🚨🚨🚨New: PULSE-X (preview)
 
 ```
-python phc/run_hydra.py env.task=HumanoidSpeedZ env=env_pulsex_amp exp_name=pulse_speed robot=smplx_humanoid learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_x/Humanoid.pth'] env.motion_file=sample_data/amass_isaac_x_simple_run.pkl
+python phc/run_hydra.py env.task=HumanoidSpeedZ env=env_pulsex_amp exp_name=pulse_x_speed robot=smplx_humanoid learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_x/Humanoid.pth'] env.motion_file=sample_data/amass_isaac_x_simple_run.pkl
 ```
 
 
