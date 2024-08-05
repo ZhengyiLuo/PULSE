@@ -66,6 +66,12 @@ contact_bodies: ["R_Ankle", "L_Ankle", "R_Toe", "L_Toe"]
 terminationHeight: 0.15
 enableEarlyTermination: True
 
+terrain_obs: True
+terrain_obs_type: "square"
+terrain_obs_root: "head"
+use_center_height: true
+real_data_mesh: false
+
 terrain:
   terrainType: trimesh # none, plane, or trimesh
   staticFriction: 1.0  # [-]
