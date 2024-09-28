@@ -110,7 +110,7 @@ class HumanoidIm(humanoid_amp_task.HumanoidAMPTask):
         return
     
     def setup_kin_info(self):
-        if self.cfg.env.save_kin_info:
+        if self.save_kin_info:
             root_pos, root_rot = self._rigid_body_pos[:, 0, :], self._rigid_body_rot[:, 0, :]
             self.kin_dict = OrderedDict()
             self.kin_dict.update({ # default set of kinemaitc information
