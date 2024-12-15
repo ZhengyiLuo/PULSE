@@ -312,6 +312,7 @@ class HumanoidAMP(humanoid_z.HumanoidZ):
                 self._num_amp_obs_per_step += 11 if (asset_file == "mjcf/smpl_humanoid.xml") else 12
             if self._has_limb_weight_obs_disc:
                 self._num_amp_obs_per_step += 10
+            
         else:
             print("Unsupported character config file: {s}".format(asset_file))
             assert (False)

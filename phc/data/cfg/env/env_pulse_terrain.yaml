@@ -60,7 +60,7 @@ numAMPObsSteps: 10
 
 local_root_obs: True
 root_height_obs: True
-ampRootHeightObs: False
+ampRootHeightObs: True
 key_bodies: ["R_Ankle", "L_Ankle", "R_Wrist",  "L_Wrist"]
 contact_bodies: ["R_Ankle", "L_Ankle", "R_Toe", "L_Toe"]
 terminationHeight: 0.15
