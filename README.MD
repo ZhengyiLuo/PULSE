@@ -130,7 +130,7 @@ python phc/run_hydra.py env.task=HumanoidPedestrianTerrainZ env=env_pulse_terrai
 
 VR Controller Tracking 
 ```
-python phc/run_hydra.py env.task=HumanoidImZ env=env_pulse_im exp_name=pulse_vr robot.real_weight_porpotion_boxes=False learning=pulse_z_task env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=[insert amass data]
+python phc/run_hydra.py env.task=HumanoidImZ env=env_pulse_im exp_name=pulse_vr robot.real_weight_porpotion_boxes=False learning=pulse_z_vr env.models=['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth'] env.motion_file=[insert amass data]
 ```
 
 
