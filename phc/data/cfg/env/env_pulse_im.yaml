@@ -12,6 +12,9 @@ embedding_size: 32
 z_readout: False
 fitting: False
 
+auto_pmcp: False
+auto_pmcp_soft: True
+
 use_vae_prior: True
 use_vae_sphere_posterior: False
 use_vae_fixed_prior: False
