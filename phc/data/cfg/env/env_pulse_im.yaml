@@ -1,10 +1,15 @@
 task: HumanoidSpeedZ
 motion_file: ""
-num_envs: 1536
+num_envs: 3072
 env_spacing:  5
 episode_length: 300
 isFlagrun: False
 enable_debug_vis: False
+
+
+fut_tracks: False
+self_obs_v: 1
+obs_v: 6
 
 embedding_norm: 1
 embedding_size: 32
@@ -36,7 +41,7 @@ distill_model_config:
   z_type: "vae"
 models: ['output/HumanoidIm/pulse_vae_iclr/Humanoid.pth']
 
-power_reward: False
+power_reward: True
 power_usage_reward: False
 power_usage_coefficient: 0.01
 
